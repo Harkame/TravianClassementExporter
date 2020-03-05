@@ -1,4 +1,6 @@
-# TravianScraper
+# TravianClassementExporter
+
+Script that export classement to json files
 
 ## Installation
 
@@ -12,6 +14,6 @@ pip install -r requirements.txt
 
 ``` bash
 
-python travianscraper\travian_scraper.py
+python tve/main.py
 
 ```
