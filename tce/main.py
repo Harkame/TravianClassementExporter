@@ -28,24 +28,33 @@ class TravianScraper:
 
 
 def parse_classement_page(driver):
-    players = driver.find_elements_by_css_selector("tbody tr td.pla a")
 
-    for player in players:
+    hrefs = []
+
+    for player in driver.find_elements_by_css_selector("tbody tr td.pla a"):
+        hrefs.append(player.get_attribute("href"))
+
+    for href in hrefs:
+        driver.get(href)
+
         time.sleep(1)
-
-        player.click()
 
         parse_player_page(driver)
 
-        with open("players.json", "w") as fp:
-            json.dump(player_list, fp)
+    with open("players.json", "w") as fp:
+        json.dump(player_list, fp)
 
 
 def parse_player_page(driver):
+    WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "tbody"))
+    )
+
     fields = driver.find_elements_by_css_selector("tbody tr")
 
     player = {}
 
+    player["pseudo"] = driver.find_element_by_css_selector(".titleInHeader").text
     player["faction"] = fields[1].find_element_by_css_selector("td").text
     player["alliance"] = fields[2].find_element_by_css_selector("td a").text
     player["population_classement"] = fields[4].find_element_by_css_selector("td").text
@@ -58,18 +67,8 @@ def parse_player_page(driver):
     player["hero_experience"] = fields[4].find_element_by_css_selector("td span").text
 
     player_list.append(player)
-    """
-    classement_page = BeautifulSoup(driver.page_source, features="lxml")
 
-    players = classement_page.select("tbody tr td.pla a")
-
-    for player in players:
-        driver.get(player["href"])
-
-        time.sleep(1)
-
-        sys.exit()
-    """
+    return
 
 
 if __name__ == "__main__":
@@ -102,11 +101,11 @@ if __name__ == "__main__":
         "input[name='usernameOrEmail']"
     )
     input_username.clear()
-    input_username.send_keys("id")
+    input_username.send_keys("fe")
 
     input_password = driver.find_element_by_css_selector("input[name='password']")
     input_password.clear()
-    input_password.send_keys("pass")
+    input_password.send_keys("ef")
 
     button_login = driver.find_element_by_css_selector('button[type="submit"]')
     button_login.click()
@@ -126,13 +125,12 @@ if __name__ == "__main__":
     first_page = 1
     last_page = int(pages_number[-1:][0].text)
 
+    driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(first_page))
+
     for page in range(first_page, last_page):
         driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
 
         parse_classement_page(driver)
-
-        sys.exit()
-
 
 # driver.close()
 
