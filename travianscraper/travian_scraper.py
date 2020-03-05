@@ -8,6 +8,9 @@ from bs4 import BeautifulSoup
 import json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 logger = logging.getLogger("travianscraper")
 
@@ -97,6 +100,16 @@ if __name__ == "__main__":
 
     driver = webdriver.Chrome("chromedriver.exe")
     driver.get("https://www.travian.com/fr#login")
+
+    WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "#sectionAfter .noWrap li:nth-child(3) a")
+        )
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".worldGroup .world:nth-child(3)"))
+    ).click()
 
     driver.close()
 
