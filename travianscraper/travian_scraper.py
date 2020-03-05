@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from selenium import webdriver
+import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,6 +17,8 @@ logger = logging.getLogger("travianscraper")
 
 TRAVIAN_URL = "https://www.travian.com/fr/gameworld/login"
 
+player_list = []
+
 
 class TravianScraper:
     session = None
@@ -23,66 +26,50 @@ class TravianScraper:
     def __init__(self, session):
         self.session = session
 
-    def login(self, url, identifiant, password):
-        self.session.cookies.clear()
 
-        headers = {
-            "Content-Type": "application/json",
-        }
+def parse_classement_page(driver):
+    players = driver.find_elements_by_css_selector("tbody tr td.pla a")
 
-        form_data = {}
+    for player in players:
+        time.sleep(1)
 
-        data = {
-            "gameWorld": {"url": url},
-            "usernameOrEmail": identifiant,
-            "password": password,
-        }
+        player.click()
 
-        print(json.dumps(data))
+        parse_player_page(driver)
 
-        response = self.session.post(TRAVIAN_URL, json=data, headers=headers)
+        with open("players.json", "w") as fp:
+            json.dump(player_list, fp)
 
-        logger.debug("status_code : %s", response.status_code)
 
-        yggtorrent_token = None
+def parse_player_page(driver):
+    fields = driver.find_elements_by_css_selector("tbody tr")
 
-        print(response.json())
-        print(response.status_code)
+    player = {}
 
-        if response.status_code == 200:
-            logger.debug("Login successful")
+    player["faction"] = fields[1].find_element_by_css_selector("td").text
+    player["alliance"] = fields[2].find_element_by_css_selector("td a").text
+    player["population_classement"] = fields[4].find_element_by_css_selector("td").text
+    player["population_score"] = fields[4].find_element_by_css_selector("td span").text
+    player["off_classement"] = fields[5].find_element_by_css_selector("td").text
+    player["off_score"] = fields[4].find_element_by_css_selector("td span").text
+    player["def_classement"] = fields[6].find_element_by_css_selector("td").text
+    player["def_score"] = fields[4].find_element_by_css_selector("td span").text
+    player["hero_level"] = fields[7].find_element_by_css_selector("td").text
+    player["hero_experience"] = fields[4].find_element_by_css_selector("td span").text
 
-            return True
-        else:
-            logger.debug("Login failed")
+    player_list.append(player)
+    """
+    classement_page = BeautifulSoup(driver.page_source, features="lxml")
 
-            return False
+    players = classement_page.select("tbody tr td.pla a")
 
-    def logout(self):
-        """
-        Logout request
-        """
-        response = self.session.get(YGGTORRENT_LOGOUT_URL)
+    for player in players:
+        driver.get(player["href"])
 
-        self.session.cookies.clear()
+        time.sleep(1)
 
-        logger.debug("status_code : %s", response.status_code)
-
-        if response.status_code == 200:
-            logger.debug("Logout successful")
-
-            return True
-        else:
-            logger.debug("Logout failed")
-
-            return False
-
-    def extract_details(self, url):
-        response = self.session.get(url)
-
-        details_page = BeautifulSoup(response.content, features="lxml")
-
-        return details_page
+        sys.exit()
+    """
 
 
 if __name__ == "__main__":
@@ -101,18 +88,54 @@ if __name__ == "__main__":
     driver = webdriver.Chrome("chromedriver.exe")
     driver.get("https://www.travian.com/fr#login")
 
-    WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "#sectionAfter .noWrap li:nth-child(3) a")
-        )
-    ).click()
-
-    WebDriverWait(driver, 20).until(
+    WebDriverWait(driver, 5).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, ".worldGroup .world:nth-child(3)"))
     ).click()
 
-    driver.close()
+    WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "input[name='usernameOrEmail']")
+        )
+    )
 
-    ##scraper.
+    input_username = driver.find_element_by_css_selector(
+        "input[name='usernameOrEmail']"
+    )
+    input_username.clear()
+    input_username.send_keys("id")
 
-    # scraper.logout()
+    input_password = driver.find_element_by_css_selector("input[name='password']")
+    input_password.clear()
+    input_password.send_keys("pass")
+
+    button_login = driver.find_element_by_css_selector('button[type="submit"]')
+    button_login.click()
+
+    WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "a.statistics"))
+    )
+
+    driver.get("https://ts3.travian.fr/statistiken.php")
+
+    WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div.paginator"))
+    )
+
+    pages_number = driver.find_elements_by_css_selector("div.paginator a")
+
+    first_page = 1
+    last_page = int(pages_number[-1:][0].text)
+
+    for page in range(first_page, last_page):
+        driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
+
+        parse_classement_page(driver)
+
+        sys.exit()
+
+
+# driver.close()
+
+##scraper.
+
+# scraper.logout()
