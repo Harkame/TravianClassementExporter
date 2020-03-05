@@ -6,6 +6,8 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 import json
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 logger = logging.getLogger("travianscraper")
 
@@ -81,6 +83,7 @@ class TravianScraper:
 
 
 if __name__ == "__main__":
+    """
     scraper = TravianScraper(requests.session())
 
     if not scraper.login("https://www.travian.com/fr/gameworld/login", "id", "pass"):
@@ -90,8 +93,12 @@ if __name__ == "__main__":
     details_page = scraper.extract_details(
         "https://ts3.travian.fr/spieler.php?uid=25357"
     )
+    """
 
-    print(details_page)
+    driver = webdriver.Chrome("chromedriver.exe")
+    driver.get("https://www.travian.com/fr#login")
+
+    driver.close()
 
     ##scraper.
 
