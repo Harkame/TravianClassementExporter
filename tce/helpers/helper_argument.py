@@ -36,7 +36,7 @@ Example : python tce/main.py -p mypassword""",
         "--driver",
         required=True,
         help="""
-Required to get classements
+Chrome web driver
 Example : python tce/main.py -d C:\chromedriver.exe""",
         type=str,
     )

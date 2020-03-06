@@ -42,3 +42,11 @@ optional arguments:
   -v, --verbose         Active verbose mode, support different level
                         Example : python japscandownloader/main.py -v
 ```
+
+### Example
+
+``` bash
+
+python tce\\main.py -i myidentifiant -p mypassword -d C:\\chromedriver.exe
+
+```
