@@ -21,8 +21,7 @@ pip install -r requirements.txt
 ## Usage
 
 ``` bash
-
-usage: main.py [-h] -i IDENTIFIANT -p PASSWORD
+usage: main.py [-h] -i IDENTIFIANT -p PASSWORD -d DRIVER [-v]
 
 Script to download travian classements
 
@@ -36,5 +35,10 @@ optional arguments:
                         Travian password
                         Required to get classements
                         Example : python tce/main.py -p mypassword
+  -d DRIVER, --driver DRIVER
 
+                        Required to get classements
+                        Example : python tce/main.py -d C:\chromedriver.exe
+  -v, --verbose         Active verbose mode, support different level
+                        Example : python japscandownloader/main.py -v
 ```
