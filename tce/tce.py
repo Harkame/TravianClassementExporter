@@ -23,7 +23,7 @@ else:
         strip_accents,
     )
 
-logger = logging.getLogger("travianscraper")
+logger = logging.getLogger("tce")
 
 TRAVIAN_URL = "https://www.travian.com/fr/gameworld/login"
 
@@ -130,8 +130,6 @@ class TravianClassementExporter:
 
         player_list.append(player)
 
-        return
-
     def run(self):
         driver = webdriver.Chrome(self.driver_path)
         driver.get("https://www.travian.com/fr#login")
@@ -171,10 +169,12 @@ class TravianClassementExporter:
             EC.presence_of_element_located((By.CSS_SELECTOR, "div.paginator"))
         )
 
+        time.sleep(1)
+
         pages_number = driver.find_elements_by_css_selector("div.paginator a")
 
         first_page = 1
-        last_page = int(pages_number[-1:][0].text)
+        last_page = int(pages_number[-3:][0].text)
 
         self.bar = tqdm(
             total=last_page * 20,  # 20players / page
