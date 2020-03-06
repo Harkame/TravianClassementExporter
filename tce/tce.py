@@ -182,7 +182,7 @@ class TravianClassementExporter:
             bar_format="[{bar}] - [{n_fmt}/{total_fmt}] - [players]",
         )
 
-        for page in range(first_page, last_page * 20):
+        for page in range(first_page, last_page):
             driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
 
             self.parse_classement_page(driver)
