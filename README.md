@@ -13,6 +13,11 @@ pip install -r requirements.txt
 
 ```
 
+## Dependencies
+
+-   [Selenium](https://selenium-python.readthedocs.io)
+-   [ChromeDriver](https://chromedriver.chromium.org)
+
 ## Usage
 
 ``` bash

@@ -12,6 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 if __package__ is None or __package__ == "":
     from helpers import (
@@ -39,6 +40,7 @@ class TravianClassementExporter:
     def __init__(self):
         self.identifiant = ""
         self.password = ""
+        self.driver_path = ""
 
     def init_arguments(self):
         arguments = get_arguments(None)
@@ -72,6 +74,9 @@ class TravianClassementExporter:
         if arguments.password is not None:
             self.password = arguments.password
 
+        if arguments.driver is not None:
+            self.driver_path = arguments.driver
+
         logger.debug("identifiant : %s", self.identifiant)
         logger.debug("password : %s", self.password)
 
@@ -90,12 +95,7 @@ class TravianClassementExporter:
         for href in hrefs:
             driver.get(href)
 
-            time.sleep(0.5)
-
             self.parse_player_page(driver)
-
-        with open("players.json", "w") as fp:
-            json.dump(player_list, fp)
 
     def parse_player_page(self, driver):
         WebDriverWait(driver, 5).until(
@@ -108,7 +108,12 @@ class TravianClassementExporter:
 
         player["pseudo"] = driver.find_element_by_css_selector(".titleInHeader").text
         player["faction"] = fields[1].find_element_by_css_selector("td").text
-        player["alliance"] = fields[2].find_element_by_css_selector("td a").text
+
+        try:
+            player["alliance"] = fields[2].find_element_by_css_selector("td a").text
+        except NoSuchElementException:
+            player["alliance"] = ""
+
         player["population_classement"] = (
             fields[4].find_element_by_css_selector("td").text
         )
@@ -129,7 +134,7 @@ class TravianClassementExporter:
         return
 
     def run(self):
-        driver = webdriver.Chrome("chromedriver.exe")
+        driver = webdriver.Chrome(self.driver_path)
         driver.get("https://www.travian.com/fr#login")
 
         WebDriverWait(driver, 5).until(
@@ -172,7 +177,10 @@ class TravianClassementExporter:
         first_page = 1
         last_page = int(pages_number[-1:][0].text)
 
-        for page in range(first_page, last_page):
+        for page in range(first_page, 10):
             driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
 
             self.parse_classement_page(driver)
+
+        with open("players.json", "w") as fp:
+            json.dump(player_list, fp)

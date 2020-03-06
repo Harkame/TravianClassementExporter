@@ -32,6 +32,16 @@ Example : python tce/main.py -p mypassword""",
     )
 
     argument_parser.add_argument(
+        "-d",
+        "--driver",
+        required=True,
+        help="""
+Required to get classements
+Example : python tce/main.py -d C:\chromedriver.exe""",
+        type=str,
+    )
+
+    argument_parser.add_argument(
         "-v",
         "--verbose",
         help="""Active verbose mode, support different level
