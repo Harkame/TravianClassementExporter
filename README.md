@@ -17,6 +17,19 @@ pip install -r requirements.txt
 
 ``` bash
 
-python tve/main.py
+usage: main.py [-h] -i IDENTIFIANT -p PASSWORD
+
+Script to download travian classements
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i IDENTIFIANT, --identifiant IDENTIFIANT
+                        Travian identifiant (username or email)
+                        Required to get classements
+                        Example : python tce/main.py -i myusername
+  -p PASSWORD, --password PASSWORD
+                        Travian password
+                        Required to get classements
+                        Example : python tce/main.py -p mypassword
 
 ```

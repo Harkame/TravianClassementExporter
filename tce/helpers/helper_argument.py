@@ -1,0 +1,42 @@
+import argparse
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def get_arguments(arguments):
+    argument_parser = argparse.ArgumentParser(
+        description="Script to download travian classements",
+        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
+    )
+
+    argument_parser.add_argument(
+        "-i",
+        "--identifiant",
+        required=True,
+        help="""Travian identifiant (username or email)
+Required to get classements
+Example : python tce/main.py -i myusername""",
+        type=str,
+    )
+
+    argument_parser.add_argument(
+        "-p",
+        "--password",
+        required=True,
+        help="""Travian password
+Required to get classements
+Example : python tce/main.py -p mypassword""",
+        type=str,
+    )
+
+    argument_parser.add_argument(
+        "-v",
+        "--verbose",
+        help="""Active verbose mode, support different level
+Example : python japscandownloader/main.py -v""",
+        action="count",
+    )
+
+    return argument_parser.parse_args(arguments)
