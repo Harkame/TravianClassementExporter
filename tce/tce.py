@@ -118,9 +118,9 @@ class TravianClassementExporter:
             fields[4].find_element_by_css_selector("td span").text
         )
         player["off_classement"] = fields[5].find_element_by_css_selector("td").text
-        player["off_score"] = fields[4].find_element_by_css_selector("td span").text
+        player["off_score"] = fields[5].find_element_by_css_selector("td span").text
         player["def_classement"] = fields[6].find_element_by_css_selector("td").text
-        player["def_score"] = fields[4].find_element_by_css_selector("td span").text
+        player["def_score"] = fields[6].find_element_by_css_selector("td span").text
         player["hero_level"] = fields[7].find_element_by_css_selector("td").text
         player["hero_experience"] = (
             fields[4].find_element_by_css_selector("td span").text
