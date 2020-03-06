@@ -177,7 +177,7 @@ class TravianClassementExporter:
         first_page = 1
         last_page = int(pages_number[-1:][0].text)
 
-        for page in range(first_page, 10):
+        for page in range(first_page, last_page):
             driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
 
             self.parse_classement_page(driver)
