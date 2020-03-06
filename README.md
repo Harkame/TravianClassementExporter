@@ -17,6 +17,7 @@ pip install -r requirements.txt
 
 -   [Selenium](https://selenium-python.readthedocs.io)
 -   [ChromeDriver](https://chromedriver.chromium.org)
+-   [tqdm](https://github.com/tqdm/tqdm)
 
 ## Usage
 
