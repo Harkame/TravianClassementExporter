@@ -1,7 +1,6 @@
 import logging
 import re
 import requests
-from bs4 import BeautifulSoup
 import json
 from selenium import webdriver
 import time
