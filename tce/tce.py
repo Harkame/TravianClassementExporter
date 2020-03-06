@@ -8,6 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from tqdm import tqdm
 
 if __package__ is None or __package__ == "":
     from helpers import (
@@ -36,6 +37,7 @@ class TravianClassementExporter:
         self.identifiant = ""
         self.password = ""
         self.driver_path = ""
+        self.bar = None
 
     def init_arguments(self):
         arguments = get_arguments(None)
@@ -91,6 +93,8 @@ class TravianClassementExporter:
             driver.get(href)
 
             self.parse_player_page(driver)
+
+            self.bar.update(1)
 
     def parse_player_page(self, driver):
         WebDriverWait(driver, 5).until(
@@ -172,10 +176,18 @@ class TravianClassementExporter:
         first_page = 1
         last_page = int(pages_number[-1:][0].text)
 
-        for page in range(first_page, last_page):
+        self.bar = tqdm(
+            total=last_page * 20,  # 20players / page
+            position=1,
+            bar_format="[{bar}] - [{n_fmt}/{total_fmt}] - [players]",
+        )
+
+        for page in range(first_page, last_page * 20):
             driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
 
             self.parse_classement_page(driver)
+
+        self.bar.close()
 
         with open("players.json", "w") as fp:
             json.dump(player_list, fp)
