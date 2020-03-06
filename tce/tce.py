@@ -1,6 +1,5 @@
 import logging
 import re
-import requests
 import json
 from selenium import webdriver
 import time
