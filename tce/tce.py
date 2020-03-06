@@ -187,7 +187,7 @@ class TravianClassementExporter:
 
             self.parse_classement_page(driver)
 
-        self.bar.close()
+            with open("players.json", "w") as fp:  # save after each page
+                json.dump(player_list, fp)
 
-        with open("players.json", "w") as fp:
-            json.dump(player_list, fp)
+        self.bar.close()
