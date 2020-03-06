@@ -37,7 +37,7 @@ optional arguments:
                         Example : python tce/main.py -p mypassword
   -d DRIVER, --driver DRIVER
 
-                        Required to get classements
+                        Chrome web driver
                         Example : python tce/main.py -d C:\chromedriver.exe
   -v, --verbose         Active verbose mode, support different level
                         Example : python japscandownloader/main.py -v
