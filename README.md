@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ## Usage
 
 ``` bash
-usage: main.py [-h] -i IDENTIFIANT -p PASSWORD -d DRIVER [-v]
+usage: main.py [-h] -i IDENTIFIANT -p PASSWORD -d DRIVER [-v] [-s SERVER]
 
 Script to download travian classements
 
@@ -42,6 +42,10 @@ optional arguments:
                         Example : python tce/main.py -d C:\chromedriver.exe
   -v, --verbose         Active verbose mode, support different level
                         Example : python japscandownloader/main.py -v
+  -s SERVER, --server SERVER
+                        Server number (login page order)
+                        Example : python japscandownloader/main.py -s 0
+                        For the first server on login page
 ```
 
 ### Example
