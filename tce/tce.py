@@ -132,17 +132,19 @@ class TravianClassementExporter:
             fields[7].find_element_by_css_selector("td span").text
         )
 
-        villages_tag = driver.find_elements_by_css_selector("#villages tbody tr")
+        villages_rows = driver.find_elements_by_css_selector("#villages tbody tr")
 
         player["villages"] = []
 
-        for village_tag in villages_tag:
-            columns = village_tag.find_elements_by_css_selector("td")
-
+        for village_row in villages_rows:
             village = {}
 
-            village["name"] = columns[1].find_element_by_css_selector("a").text
-            village["region"] = columns[5].find_element_by_css_selector("a").text
+            village["name"] = village_row.find_element_by_css_selector("td.name a").text
+
+            coord_tags = village_row.find_elements_by_css_selector("td.coords a")
+
+            if len(coord_tags) > 1:
+                village["region"] = coord_tags[1].text
 
             player["villages"].append(village)
 
