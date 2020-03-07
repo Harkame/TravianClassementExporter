@@ -49,4 +49,13 @@ Example : python japscandownloader/main.py -v""",
         action="count",
     )
 
+    argument_parser.add_argument(
+        "-s",
+        "--server",
+        help="""Server number (login page order)
+Example : python japscandownloader/main.py -s 0
+For the first server on login page""",
+        type=str,
+    )
+
     return argument_parser.parse_args(arguments)

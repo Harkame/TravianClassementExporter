@@ -38,6 +38,7 @@ class TravianClassementExporter:
         self.password = ""
         self.driver_path = ""
         self.bar = None
+        self.server = 1
 
     def init_arguments(self):
         arguments = get_arguments(None)
@@ -74,6 +75,9 @@ class TravianClassementExporter:
         if arguments.driver is not None:
             self.driver_path = arguments.driver
 
+        if arguments.server is not None:
+            self.server = arguments.server
+
         logger.debug("identifiant : %s", self.identifiant)
         logger.debug("password : %s", self.password)
 
@@ -101,7 +105,7 @@ class TravianClassementExporter:
             EC.presence_of_element_located((By.CSS_SELECTOR, "tbody"))
         )
 
-        fields = driver.find_elements_by_css_selector("tbody tr")
+        fields = driver.find_elements_by_css_selector("#details tbody tr")
 
         player = {}
 
@@ -128,6 +132,20 @@ class TravianClassementExporter:
             fields[7].find_element_by_css_selector("td span").text
         )
 
+        villages_tag = driver.find_elements_by_css_selector("#villages tbody tr")
+
+        player["villages"] = []
+
+        for village_tag in villages_tag:
+            columns = village_tag.find_elements_by_css_selector("td")
+
+            village = {}
+
+            village["name"] = columns[1].find_element_by_css_selector("a").text
+            village["region"] = columns[5].find_element_by_css_selector("a").text
+
+            player["villages"].append(village)
+
         player_list.append(player)
 
     def run(self):
@@ -136,7 +154,7 @@ class TravianClassementExporter:
 
         WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".worldGroup .world:nth-child(3)")
+                (By.CSS_SELECTOR, f".worldGroup .world:nth-child({self.server})")
             )
         ).click()
 
@@ -161,9 +179,7 @@ class TravianClassementExporter:
 
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a.statistics"))
-        )
-
-        driver.get("https://ts3.travian.fr/statistiken.php")
+        ).click()
 
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "div.paginator"))
@@ -182,8 +198,10 @@ class TravianClassementExporter:
             bar_format="[{bar}] - [{n_fmt}/{total_fmt}] - [players]",
         )
 
+        current_url = driver.current_url
+
         for page in range(first_page, last_page):
-            driver.get("https://ts3.travian.fr/statistiken.php?id=0&page=" + str(page))
+            driver.get(current_url + "?id=0&page=" + str(page))
 
             self.parse_classement_page(driver)
 
