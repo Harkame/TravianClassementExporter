@@ -43,8 +43,8 @@ optional arguments:
   -v, --verbose         Active verbose mode, support different level
                         Example : python japscandownloader/main.py -v
   -s SERVER, --server SERVER
-                        Server number (login page order)
-                        Example : python japscandownloader/main.py -s 0
+                        Server number (LOGIN PAGE ORDER)
+                        Example : python japscandownloader/main.py -s 1
                         For the first server on login page
 ```
 
@@ -52,6 +52,6 @@ optional arguments:
 
 ``` bash
 
-python tce\\main.py -i myidentifiant -p mypassword -d C:\\chromedriver.exe
+python tce\\main.py -i myidentifiant -p mypassword -d C:\\chromedriver.exe -s 2
 
 ```
