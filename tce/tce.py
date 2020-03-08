@@ -140,6 +140,9 @@ class TravianClassementExporter:
             village = {}
 
             village["name"] = village_row.find_element_by_css_selector("td.name a").text
+            village["inhabitants"] = village_row.find_element_by_css_selector(
+                "td.inhabitants"
+            ).text
 
             coord_tags = village_row.find_elements_by_css_selector("td.coords a")
 
