@@ -30,6 +30,13 @@ TRAVIAN_URL = "https://www.travian.com/fr/gameworld/login"
 player_list = []
 
 
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return json.JSONEncoder.default(self, obj)
+
+
 class TravianClassementExporter:
     session = None
 
@@ -192,6 +199,8 @@ class TravianClassementExporter:
 
         time.sleep(1)
 
+        """
+
         pages_number = driver.find_elements_by_css_selector("div.paginator a")
 
         first_page = 1
@@ -214,3 +223,45 @@ class TravianClassementExporter:
                 json.dump(player_list, fp)
 
         self.bar.close()
+        """
+
+        regions = []
+
+        for x in range(-63, 201):
+            for y in range(200, 201):
+
+                time.sleep(1)
+
+                driver.get(f"https://ts20.travian.fr/position_details.php?x={x}&y={y}")
+
+                try:
+                    WebDriverWait(driver, 5).until(
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, "#tileDetails")
+                        )
+                    )
+                except:
+                    print("no found")
+                    continue
+
+                try:
+                    table_tags = driver.find_elements_by_css_selector("table")
+
+                    region = None
+
+                    if len(table_tags) == 2:  # empty
+                        region = (
+                            table_tags[1].find_elements_by_css_selector("a")[0].text
+                        )
+                    elif len(table_tags) == 4:  # village
+                        region = (
+                            table_tags[1].find_elements_by_css_selector("a")[2].text
+                        )
+
+                    if region is not None:
+                        regions.append([x, y, region])
+
+                        with open("regions.json", "w+") as fp:
+                            json.dump(regions, fp)
+                except:
+                    continue
